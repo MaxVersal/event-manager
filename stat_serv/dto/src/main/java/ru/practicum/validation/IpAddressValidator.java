@@ -6,7 +6,8 @@ import java.util.regex.Pattern;
 
 public class IpAddressValidator implements ConstraintValidator<IpAddress, String> {
     @Override
-    public void initialize(IpAddress constraintAnnotation) {}
+    public void initialize(IpAddress constraintAnnotation) {
+    }
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext cvContext) {

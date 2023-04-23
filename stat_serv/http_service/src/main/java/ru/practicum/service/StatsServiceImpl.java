@@ -31,7 +31,7 @@ public class StatsServiceImpl implements StatsService {
     private final HitMapper mapper;
 
     @Override
-    public List<ViewStats> getStats(String start, String end, List<String> uris, Boolean unique){
+    public List<ViewStats> getStats(String start, String end, List<String> uris, Boolean unique) {
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         if (uris != null) {
             if (unique) {
