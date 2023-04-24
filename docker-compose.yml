@@ -27,7 +27,7 @@ services:
 
   ewm-service:
     build:
-      context: main_serv/
+      context: main-serv/
       dockerfile: Dockerfile
     ports:
     - "8080:8080"

@@ -10,7 +10,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>http_service</artifactId>
+    <artifactId>http-service</artifactId>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>

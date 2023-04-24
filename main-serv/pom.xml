@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>main_serv</artifactId>
+    <artifactId>main-serv</artifactId>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>

@@ -16,7 +16,7 @@
 		<module>stat_serv/http_client</module>
 		<module>stat_serv/http_service</module>
 		<module>stat_serv/dto</module>
-        <module>main_serv</module>
+        <module>main-serv</module>
     </modules>
 
     <groupId>ru.practicum</groupId>

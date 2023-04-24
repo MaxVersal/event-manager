@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>stat_serv</artifactId>
+    <artifactId>stat-serv</artifactId>
     <packaging>pom</packaging>
     <modules>
     </modules>
