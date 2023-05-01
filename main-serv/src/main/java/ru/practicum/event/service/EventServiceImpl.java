@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
+import ru.practicum.client.StatsClient;
+import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.event.dto.EventAccept;
 import ru.practicum.event.dto.EventResponse;
 import ru.practicum.event.dto.EventUpdateForUser;
@@ -28,6 +30,7 @@ import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
@@ -49,6 +52,8 @@ public class EventServiceImpl implements EventService {
     private final EventMapper eventMapper;
 
     private final LocationRepository locationRepository;
+
+    private final StatsClient client;
 
     @Override
     @Transactional
@@ -157,19 +162,6 @@ public class EventServiceImpl implements EventService {
                                                                  String rangeEnd,
                                                                  Integer from,
                                                                  Integer size) {
-//        LocalDateTime start = LocalDateTime.parse(rangeStart, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-//        LocalDateTime end = LocalDateTime.parse(rangeEnd, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-//        return ResponseEntity
-//                .status(HttpStatus.OK)
-//                .body(eventRepository.findForAdmin(users,
-//                                states,
-//                                categories,
-//                                start,
-//                                end,
-//                                PageRequest.of(from / size, size))
-//                        .stream()
-//                        .map(eventMapper::toEventResponse)
-//                        .collect(Collectors.toList()));
         final QEvent event = QEvent.event;
         final BooleanBuilder builder = new BooleanBuilder();
         if (users != null && !users.isEmpty()) {
@@ -197,53 +189,53 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public ResponseEntity<EventResponse> updateAdmEvent(UpdateEventForAdmin eventAdminRequest, Long id) {
-        final Event eventWrap = eventRepository.findById(id).orElseThrow(
+        final Event event = eventRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Event with id=%d was not found", id))
         );
-        eventUpdate(eventWrap, eventAdminRequest.getTitle(), eventAdminRequest.getAnnotation(), eventAdminRequest.getDescription());
-        Optional.ofNullable(eventAdminRequest.getPaid()).ifPresent(eventWrap::setPaid);
-        Optional.ofNullable(eventAdminRequest.getParticipantLimit()).ifPresent(eventWrap::setParticipantLimit);
+        eventUpdate(event, eventAdminRequest.getTitle(), eventAdminRequest.getAnnotation(), eventAdminRequest.getDescription());
+        Optional.ofNullable(eventAdminRequest.getPaid()).ifPresent(event::setPaid);
+        Optional.ofNullable(eventAdminRequest.getParticipantLimit()).ifPresent(event::setParticipantLimit);
         Optional.ofNullable(eventAdminRequest.getEventDate()).ifPresent(it -> {
             final LocalDateTime eventDate = LocalDateTime.parse(eventAdminRequest.getEventDate(),
                     DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             if (eventDate.isBefore(LocalDateTime.now().plusHours(1))) {
                 throw new ConflictException(String.format("Event date is not valid! eventDate=%s", eventAdminRequest.getEventDate()));
             }
-            eventWrap.setEventDate(eventDate);
+            event.setEventDate(eventDate);
         });
         Optional.ofNullable(eventAdminRequest.getCategory()).ifPresent(it -> {
             final Category categoryWrap = categoryRepository.findById(eventAdminRequest.getCategory()).orElseThrow(
                     () -> new EntityNotFoundException(String.format("Category with id=%d was not found", eventAdminRequest.getCategory()))
             );
-            eventWrap.setCategory(categoryWrap);
+            event.setCategory(categoryWrap);
         });
         Optional.ofNullable(eventAdminRequest.getLocation()).ifPresent(it -> {
             final Location location = eventMapper.toLocEntity(eventAdminRequest.getLocation());
             final Location locationWrap = locationRepository.save(location);
-            eventWrap.setLocation(locationWrap);
+            event.setLocation(locationWrap);
         });
-        if (eventWrap.getState() == State.PUBLISHED) {
-            throw new ConflictException(String.format("The event has already been published! Event state=%s", eventWrap.getState()));
+        if (event.getState() == State.PUBLISHED) {
+            throw new ConflictException(String.format("The event has already been published! Event state=%s", event.getState()));
         }
         if (eventAdminRequest.getStateAction() != null) {
             final StateAction stateAction = StateAction.valueOf(eventAdminRequest.getStateAction());
             switch (stateAction) {
                 case PUBLISH_EVENT: {
-                    eventWrap.setPublishedOn(LocalDateTime.now());
-                    eventWrap.setState(State.PUBLISHED);
+                    event.setPublishedOn(LocalDateTime.now());
+                    event.setState(State.PUBLISHED);
                     break;
                 }
                 case REJECT_EVENT: {
-                    eventWrap.setState(State.CANCELED);
-                    throw new ConflictException(String.format("You can't publish a canceled event! Event state=%s", eventWrap.getState()));
+                    event.setState(State.CANCELED);
+                    throw new ConflictException(String.format("You can't publish a canceled event! Event state=%s", event.getState()));
                 }
                 default:
-                    throw new EntityNotFoundException(String.format("Incorrect event stateAction=%s", eventWrap.getState()));
+                    throw new EntityNotFoundException(String.format("Incorrect event stateAction=%s", event.getState()));
             }
         }
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(eventMapper.toEventResponse(eventRepository.save(eventWrap)));
+                .body(eventMapper.toEventResponse(eventRepository.save(event)));
     }
 
 
@@ -257,7 +249,8 @@ public class EventServiceImpl implements EventService {
                                                                Boolean onlyAvailable,
                                                                String sort,
                                                                Integer from,
-                                                               Integer size) {
+                                                               Integer size,
+                                                               HttpServletRequest httpServletRequest) {
         final QEvent event = QEvent.event;
         final QRequest request = QRequest.request;
         final PageRequest pageRequest = PageRequest.of((from / size), size);
@@ -283,6 +276,11 @@ public class EventServiceImpl implements EventService {
             conditions.and(participantLimit.loe(event.participantLimit));
         }
         List<Event> events = eventRepository.findAll(conditions, pageRequest).getContent();
+        client.save(new EndpointHitDto("ewn-service", httpServletRequest.getRequestURI(), httpServletRequest.getRemoteAddr(), LocalDateTime.now())).subscribe();
+        for (Event event1 : events) {
+            event1.setViews(event1.getViews() + 1);
+            eventRepository.save(event1);
+        }
         if (sort != null) {
             if (sort.equals("VIEWS")) {
                 events = events
@@ -304,13 +302,16 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public ResponseEntity<EventResponse> getEventById(Long eventId) {
+    public ResponseEntity<EventResponse> getEventById(Long eventId, HttpServletRequest httpServletRequest) {
         final Event event = eventRepository.findById(eventId).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Event with id=%d was not found", eventId))
         );
         if (event.getState() != State.PUBLISHED) {
             throw new ConflictException(String.format("The state must have a state=%s", State.PUBLISHED.name()));
         }
+        event.setViews(event.getViews() + 1);
+        eventRepository.save(event);
+        client.save(new EndpointHitDto("ewm-service", httpServletRequest.getRequestURI(), httpServletRequest.getRemoteAddr(), LocalDateTime.now())).subscribe();
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(eventMapper.toEventResponse(event));

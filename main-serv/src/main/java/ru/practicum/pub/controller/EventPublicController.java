@@ -1,20 +1,20 @@
 package ru.practicum.pub.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.client.StatsClient;
-import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.event.dto.EventResponse;
 import ru.practicum.event.service.EventService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/events")
 @RequiredArgsConstructor
+@Slf4j
 public class EventPublicController {
     private final StatsClient client;
 
@@ -31,14 +31,14 @@ public class EventPublicController {
                                                                @RequestParam(value = "from", required = false, defaultValue = "0") Integer from,
                                                                @RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
                                                                HttpServletRequest request) {
-        client.save(new EndpointHitDto("ewn-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now())).subscribe();
-        return eventService.getPublicEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+        log.info("GET request to /events");
+        return eventService.getPublicEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size, request);
     }
 
     @GetMapping("/{eventId}")
     public ResponseEntity<EventResponse> getEventById(@PathVariable Long eventId,
                                                       HttpServletRequest request) {
-        client.save(new EndpointHitDto("ewn-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now())).subscribe();
-        return eventService.getEventById(eventId);
+        log.info("GET request for /events/" + eventId);
+        return eventService.getEventById(eventId, request);
     }
 }

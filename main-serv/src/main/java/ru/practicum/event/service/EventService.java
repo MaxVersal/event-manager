@@ -8,6 +8,7 @@ import ru.practicum.event.dto.EventUpdateForUser;
 import ru.practicum.event.dto.UpdateEventForAdmin;
 import ru.practicum.event.model.State;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface EventService {
@@ -44,8 +45,9 @@ public interface EventService {
                                                         Boolean onlyAvailable,
                                                         String sort,
                                                         Integer from,
-                                                        Integer size);
+                                                        Integer size,
+                                                        HttpServletRequest request);
 
     @Transactional
-    ResponseEntity<EventResponse> getEventById(Long eventId);
+    ResponseEntity<EventResponse> getEventById(Long eventId, HttpServletRequest request);
 }

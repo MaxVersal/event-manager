@@ -29,7 +29,7 @@ public class ServiceController {
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)
     public EndpointHitDto createHit(@RequestBody @Valid EndpointHitDto endpointHitDto) {
-        log.info("POST request with body {}", endpointHitDto);
+        log.info("POST request with body {}", endpointHitDto.toString());
         return service.save(endpointHitDto);
     }
 

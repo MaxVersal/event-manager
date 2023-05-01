@@ -3,7 +3,6 @@ package ru.practicum.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.validation.IpAddress;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -23,7 +22,7 @@ public class EndpointHitDto {
     @NotNull(message = "необходимо добавить поле uri")
     String uri;
 
-    @IpAddress
+
     @NotBlank(message = "поле ip не может быть пустым")
     @NotNull(message = "необходимо добавить поле ip")
     String ip;

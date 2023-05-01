@@ -24,7 +24,7 @@ public class StatsClient {
 
     @Autowired
     public StatsClient(WebClient.Builder builder,
-                       @Value("http://localhost:9090") String url) {
+                       @Value("http://stats-server:9090") String url) {
         this.client = builder
                 .baseUrl(url)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)

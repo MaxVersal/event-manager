@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.validation.IpAddress;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -27,7 +26,6 @@ public class Hit {
     String uri;
 
     @Column(name = "ip", nullable = false)
-    @IpAddress
     String ip;
 
     @Column(name = "timestamp", nullable = false)
