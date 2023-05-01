@@ -1,7 +1,9 @@
 package ru.practicum.model;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.validation.IpAddress;
 
@@ -11,6 +13,8 @@ import java.time.LocalDateTime;
 @Data
 @Entity(name = "hits")
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@AllArgsConstructor
+@NoArgsConstructor
 public class Hit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
