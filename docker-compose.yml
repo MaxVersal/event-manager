@@ -1,15 +1,47 @@
 version: '3.1'
 services:
   stats-server:
+    build:
+      context: stat_serv/http_service
+      dockerfile: Dockerfile
     ports:
       - "9090:9090"
+    image: stats-server
+    container_name: stat_serv
+    depends_on:
+      - stats-db
+    environment:
+      - POSTGRES_URL=jdbc:postgresql://stats-db:5432/explore
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
 
   stats-db:
     image: postgres:14-alpine
+    container_name: stats_db
+    ports:
+      - "6542:5432"
+    environment:
+      - POSTGRES_DB=explore
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
 
   ewm-service:
+    build:
+      context: main-serv/
+      dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+    - "8080:8080"
+    image: main-service
+    container_name: main_service
+    depends_on:
+      - ewm-db
 
   ewm-db:
     image: postgres:14-alpine
+    container_name: ewm-db
+    ports:
+      - "6541:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
