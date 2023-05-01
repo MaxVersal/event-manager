@@ -1,7 +1,5 @@
 package ru.practicum.event.service;
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.dsl.NumberExpression;
 import io.micrometer.core.instrument.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,13 +17,15 @@ import ru.practicum.event.dto.EventResponse;
 import ru.practicum.event.dto.EventUpdateForUser;
 import ru.practicum.event.dto.UpdateEventForAdmin;
 import ru.practicum.event.mapper.EventMapper;
-import ru.practicum.event.model.*;
+import ru.practicum.event.model.Event;
+import ru.practicum.event.model.Location;
+import ru.practicum.event.model.State;
+import ru.practicum.event.model.StateAction;
+import ru.practicum.event.repository.EventCriteriaRepository;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.event.repository.LocationRepository;
 import ru.practicum.exceptions.ConflictException;
 import ru.practicum.exceptions.EventDateException;
-import ru.practicum.request.model.QRequest;
-import ru.practicum.request.model.Status;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
@@ -54,6 +54,8 @@ public class EventServiceImpl implements EventService {
     private final LocationRepository locationRepository;
 
     private final StatsClient client;
+
+    private final EventCriteriaRepository criteriaRepository;
 
     @Override
     @Transactional
@@ -162,25 +164,10 @@ public class EventServiceImpl implements EventService {
                                                                  String rangeEnd,
                                                                  Integer from,
                                                                  Integer size) {
-        final QEvent event = QEvent.event;
-        final BooleanBuilder builder = new BooleanBuilder();
-        if (users != null && !users.isEmpty()) {
-            builder.and(event.initiator.id.in(users));
-        }
-        if (states != null && !states.isEmpty()) {
-            builder.and(event.state.in(states));
-        }
-        if (categories != null && !categories.isEmpty()) {
-            builder.and(event.category.id.in(categories));
-        }
-        if ((rangeStart != null && !rangeStart.isEmpty()) && (rangeEnd != null && !rangeEnd.isEmpty())) {
-            final LocalDateTime start = LocalDateTime.parse(rangeStart, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            final LocalDateTime end = LocalDateTime.parse(rangeEnd, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            builder.and(event.eventDate.between(start, end));
-        }
+        List<Event> events = criteriaRepository.getEvents(null, users, categories, states, null, rangeStart, rangeEnd, null, from, size);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(eventRepository.findAll(builder, PageRequest.of(from / size, size))
+                .body(events
                         .stream()
                         .map(eventMapper::toEventResponse)
                         .collect(Collectors.toList()));
@@ -251,31 +238,8 @@ public class EventServiceImpl implements EventService {
                                                                Integer from,
                                                                Integer size,
                                                                HttpServletRequest httpServletRequest) {
-        final QEvent event = QEvent.event;
-        final QRequest request = QRequest.request;
-        final PageRequest pageRequest = PageRequest.of((from / size), size);
-        final BooleanBuilder conditions = new BooleanBuilder();
-        if (text != null && !text.isBlank()) {
-            conditions.and(event.annotation.likeIgnoreCase(text).or(event.description.likeIgnoreCase(text)));
-        }
-        if (categories != null && !categories.isEmpty()) {
-            conditions.and(event.category.id.in(categories));
-        }
-        if (paid != null) {
-            conditions.and(event.paid.eq(paid));
-        }
-        if ((rangeStart != null && !rangeStart.isEmpty()) && (rangeEnd != null && !rangeEnd.isEmpty())) {
-            final LocalDateTime start = LocalDateTime.parse(rangeStart, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            final LocalDateTime end = LocalDateTime.parse(rangeEnd, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            conditions.and(event.eventDate.between(start, end));
-        } else {
-            conditions.and(event.eventDate.after(LocalDateTime.now()));
-        }
-        if (onlyAvailable != null && onlyAvailable) {
-            final NumberExpression<Long> participantLimit = request.event.id.eq(event.id).and(request.status.eq(Status.CONFIRMED)).count();
-            conditions.and(participantLimit.loe(event.participantLimit));
-        }
-        List<Event> events = eventRepository.findAll(conditions, pageRequest).getContent();
+
+        List<Event> events = criteriaRepository.getEvents(text, null, categories, null, paid, rangeStart, rangeEnd, onlyAvailable, from, size);
         client.save(new EndpointHitDto("ewn-service", httpServletRequest.getRequestURI(), httpServletRequest.getRemoteAddr(), LocalDateTime.now())).subscribe();
         for (Event event1 : events) {
             event1.setViews(event1.getViews() + 1);

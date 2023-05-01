@@ -3,7 +3,6 @@ package ru.practicum.event.repository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.State;
 import ru.practicum.user.model.User;
@@ -11,7 +10,7 @@ import ru.practicum.user.model.User;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface EventRepository extends JpaRepository<Event, Long>, QuerydslPredicateExecutor<Event> {
+public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findAllByInitiator(User user, Pageable pageable);
 
     @Query("select e from Event e where e.id=?1 and e.initiator.id=?2")
