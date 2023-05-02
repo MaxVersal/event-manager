@@ -72,7 +72,6 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    @Transactional
     public ResponseEntity<List<ParticipationRequestDto>> findRequestsByUserId(Long userId) {
         final User user = userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException(String.format("User with id=%d not found.", userId))
@@ -103,7 +102,6 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    @Transactional
     public ResponseEntity<List<ParticipationRequestDto>> findByUserIdAndEventId(Long eventId, Long userId) {
         final User user = userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException(String.format("User with id=%d not found.", userId))

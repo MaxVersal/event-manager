@@ -51,7 +51,6 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @Transactional
     public ResponseEntity<Category> getCategoryById(Long id) {
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -60,7 +59,6 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @Transactional
     public List<Category> getAllCategories(Integer from, Integer size) {
         return categoryRepository.findAll(PageRequest.of(from / size, size)).toList();
     }

@@ -53,7 +53,6 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    @Transactional
     public ResponseEntity<CompilationDto> getCompilationById(Long compId) {
         final Compilation compilation = compilationRepository.findById(compId).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Compilation with id=%d not found", compId))
@@ -94,7 +93,6 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    @Transactional
     public ResponseEntity<List<CompilationDto>> getAllCompilations(Boolean pinned, Integer from, Integer size) {
         if (pinned != null) {
             return ResponseEntity

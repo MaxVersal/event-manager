@@ -31,7 +31,6 @@ public class UserAdminServiceImpl implements UserAdminService {
     }
 
     @Override
-    @Transactional
     public List<UserDto> getUsers(List<Long> ids, Integer from, Integer size) {
         if (ids != null) {
             return userRepository.findAllByIdIn(ids, PageRequest.of(from / size, size))

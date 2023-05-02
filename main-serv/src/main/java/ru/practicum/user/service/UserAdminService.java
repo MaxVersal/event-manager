@@ -8,12 +8,9 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 public interface UserAdminService {
-    @Transactional
     UserDto createUser(UserDtoAccept userDtoAccept);
 
-    @Transactional
     List<UserDto> getUsers(List<Long> ids, Integer from, Integer size);
 
-    @Transactional
     ResponseEntity<Object> deleteUser(Long id);
 }

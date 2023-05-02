@@ -58,7 +58,6 @@ public class EventServiceImpl implements EventService {
     private final EventCriteriaRepository criteriaRepository;
 
     @Override
-    @Transactional
     public ResponseEntity<EventResponse> postEvent(Long userId, EventAccept eventAccept) {
         final User user = userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException(String.format("User with id=%d not found", userId)));
@@ -75,7 +74,6 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional
     public List<EventResponse> getEventsForUser(Long userId, Integer from, Integer size) {
         final User user = userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException(String.format("User with id = %d not found.", userId))
@@ -85,7 +83,6 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional
     public ResponseEntity<EventResponse> findById(Long userId, Long eventId) {
         final User user = userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException(String.format("User with id = %d not found.", userId))
@@ -156,7 +153,6 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional
     public ResponseEntity<List<EventResponse>> getEventsForAdmin(List<Long> users,
                                                                  List<State> states,
                                                                  List<Long> categories,
@@ -227,7 +223,6 @@ public class EventServiceImpl implements EventService {
 
 
     @Override
-    @Transactional
     public ResponseEntity<List<EventResponse>> getPublicEvents(String text,
                                                                List<Long> categories,
                                                                Boolean paid,

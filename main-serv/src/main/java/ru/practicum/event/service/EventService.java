@@ -1,7 +1,6 @@
 package ru.practicum.event.service;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.event.dto.EventAccept;
 import ru.practicum.event.dto.EventResponse;
 import ru.practicum.event.dto.EventUpdateForUser;
@@ -12,19 +11,17 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface EventService {
-    @Transactional
+
     ResponseEntity<EventResponse> postEvent(Long userId, EventAccept eventAccept);
 
-    @Transactional
+
     List<EventResponse> getEventsForUser(Long userId, Integer from, Integer size);
 
-    @Transactional
     ResponseEntity<EventResponse> findById(Long userId, Long eventId);
 
-    @Transactional
+
     ResponseEntity<EventResponse> updateEvent(EventUpdateForUser eventUpdateForUser, Long userId, Long eventId);
 
-    @Transactional
     ResponseEntity<List<EventResponse>> getEventsForAdmin(List<Long> users,
                                                           List<State> states,
                                                           List<Long> categories,
@@ -33,10 +30,10 @@ public interface EventService {
                                                           Integer from,
                                                           Integer size);
 
-    @Transactional
+
     ResponseEntity<EventResponse> updateAdmEvent(UpdateEventForAdmin eventAdminRequest, Long id);
 
-    @Transactional
+
     ResponseEntity<List<EventResponse>> getPublicEvents(String text,
                                                         List<Long> categories,
                                                         Boolean paid,
@@ -48,6 +45,6 @@ public interface EventService {
                                                         Integer size,
                                                         HttpServletRequest request);
 
-    @Transactional
+
     ResponseEntity<EventResponse> getEventById(Long eventId, HttpServletRequest request);
 }
