@@ -5,7 +5,6 @@ import ru.practicum.compilation.dto.CompilationAccept;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.UpdateCompilation;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 public interface CompilationService {

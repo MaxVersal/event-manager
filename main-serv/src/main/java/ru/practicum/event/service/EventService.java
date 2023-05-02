@@ -19,7 +19,6 @@ public interface EventService {
 
     ResponseEntity<EventResponse> findById(Long userId, Long eventId);
 
-
     ResponseEntity<EventResponse> updateEvent(EventUpdateForUser eventUpdateForUser, Long userId, Long eventId);
 
     ResponseEntity<List<EventResponse>> getEventsForAdmin(List<Long> users,

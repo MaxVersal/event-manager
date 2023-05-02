@@ -4,7 +4,6 @@ import org.springframework.http.ResponseEntity;
 import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.dto.UserDtoAccept;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 public interface UserAdminService {

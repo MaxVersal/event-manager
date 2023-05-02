@@ -3,7 +3,6 @@ package ru.practicum.category.service;
 import org.springframework.http.ResponseEntity;
 import ru.practicum.category.model.Category;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 public interface CategoryService {

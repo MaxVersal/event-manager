@@ -5,7 +5,6 @@ import ru.practicum.event.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.event.dto.EventRequestStatusUpdateResult;
 import ru.practicum.request.dto.ParticipationRequestDto;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 public interface RequestService {
