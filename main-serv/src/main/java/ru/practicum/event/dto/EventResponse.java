@@ -6,8 +6,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.category.model.Category;
+import ru.practicum.comment.dto.CommentDto;
 import ru.practicum.event.model.State;
 import ru.practicum.user.dto.UserForEvent;
+
+import java.util.Set;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -45,4 +48,6 @@ public class EventResponse {
     String title;
 
     Integer views;
+
+    Set<CommentDto> comments;
 }

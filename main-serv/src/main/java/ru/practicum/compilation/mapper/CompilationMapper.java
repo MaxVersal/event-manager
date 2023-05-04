@@ -11,8 +11,6 @@ import ru.practicum.event.mapper.EventMapper;
 @Mapper(componentModel = "spring", uses = {EventMapper.class})
 public interface CompilationMapper {
 
-    EventMapper mapper = Mappers.getMapper(EventMapper.class);
-
     @Mapping(target = "events", ignore = true)
     Compilation toEntity(CompilationAccept compilationAccept);
 

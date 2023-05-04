@@ -3,6 +3,7 @@ package ru.practicum.event.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+import ru.practicum.comment.mapper.CommentMapper;
 import ru.practicum.event.dto.EventAccept;
 import ru.practicum.event.dto.EventResponse;
 import ru.practicum.event.dto.LocationDto;
@@ -14,7 +15,7 @@ import ru.practicum.user.model.User;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {CommentMapper.class})
 public interface EventMapper {
     LocationDto toLocDto(Location location);
 
@@ -28,6 +29,7 @@ public interface EventMapper {
     @Mapping(target = "createdOn", source = "createdOn", qualifiedByName = "mapDate")
     @Mapping(target = "eventDate", source = "eventDate", qualifiedByName = "mapDate")
     @Mapping(target = "confirmedRequests", source = "confirmedRequests")
+    @Mapping(target = "comments", source = "comments")
     EventResponse toEventResponse(Event event);
 
     @Named("mapDate")
