@@ -35,7 +35,7 @@ public class StatsServiceImpl implements StatsService {
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         if (uris != null) {
             if (unique) {
-                return repository.findAllByUriInAndTimestampBetween(uris,
+                List<ViewStats> viewStatsList = repository.findAllByUriInAndTimestampBetween(uris,
                                 LocalDateTime.parse(start, pattern),
                                 LocalDateTime.parse(end, pattern))
                         .stream()
@@ -44,8 +44,9 @@ public class StatsServiceImpl implements StatsService {
                         .sorted(Comparator.comparing(ViewStats::getHits).reversed())
                         .filter(distinctByKey((ViewStats::getUri)))
                         .collect(Collectors.toList());
+                return viewStatsList;
             } else {
-                return repository.findAllByUriInAndTimestampBetween(uris,
+                List<ViewStats> viewStatsList = repository.findAllByUriInAndTimestampBetween(uris,
                                 LocalDateTime.parse(start, pattern),
                                 LocalDateTime.parse(end, pattern))
                         .stream()
@@ -54,6 +55,7 @@ public class StatsServiceImpl implements StatsService {
                         .sorted(Comparator.comparing(ViewStats::getHits).reversed())
                         .filter(distinctByKey((ViewStats::getUri)))
                         .collect(Collectors.toList());
+                return viewStatsList;
             }
         }
         List<Hit> hits = repository.findAllByTimestampBetween(LocalDateTime.parse(start, pattern), LocalDateTime.parse(end, pattern));

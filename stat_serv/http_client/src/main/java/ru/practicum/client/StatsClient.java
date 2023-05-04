@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -18,13 +18,13 @@ import ru.practicum.dto.ViewStats;
 import java.util.List;
 
 @Slf4j
-@Service
+@Component
 public class StatsClient {
     private final WebClient client;
 
     @Autowired
     public StatsClient(WebClient.Builder builder,
-                       @Value("${stats.server.url}") String url) {
+                       @Value("http://stats-server:9090") String url) {
         this.client = builder
                 .baseUrl(url)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
