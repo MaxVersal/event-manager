@@ -6482,7 +6482,7 @@
                   "pm.test(\"возвращается правильный apierror\", function() {\r",
                   "    pm.expect(target).to.have.property('status');\r",
                   "    pm.expect(target).to.have.property('reason');\r",
-                  "    pm.expect(target.status).to.eql(\"NOT_FOUND\");\r",
+                  "    pm.expect(target.status).to.eql(\"CONFLICT\");\r",
                   "});"
                 ],
                 "type": "text/javascript"
