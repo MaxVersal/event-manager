@@ -6380,7 +6380,7 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/users/:userId/events/:eventId/comment",
+              "raw": "{{baseUrl}}/users/:userId/events/:eventId/comments",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -6389,7 +6389,7 @@
                 ":userId",
                 "events",
                 ":eventId",
-                "comment"
+                "comments"
               ],
               "variable": [
                 {
@@ -6398,7 +6398,7 @@
                 },
                 {
                   "key": "eventId",
-                  "value": "{{eid}}"
+                  "value": "1"
                 }
               ]
             }
@@ -6441,7 +6441,7 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/users/:userId/events/:eventId/comment",
+              "raw": "{{baseUrl}}/users/:userId/events/:eventId/comments",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -6450,7 +6450,7 @@
                 ":userId",
                 "events",
                 ":eventId",
-                "comment"
+                "comments"
               ],
               "variable": [
                 {
@@ -6493,7 +6493,7 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/users/:userId/events/:eventId/comment",
+              "raw": "{{baseUrl}}/users/:userId/events/:eventId/comments",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -6502,7 +6502,7 @@
                 ":userId",
                 "events",
                 ":eventId",
-                "comment"
+                "comments"
               ],
               "variable": [
                 {
@@ -6554,7 +6554,7 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/users/:userId/events/:eventId/comment",
+              "raw": "{{baseUrl}}/users/:userId/events/:eventId/comments",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -6563,7 +6563,7 @@
                 ":userId",
                 "events",
                 ":eventId",
-                "comment"
+                "comments"
               ],
               "variable": [
                 {
@@ -6573,6 +6573,226 @@
                 {
                   "key": "eventId",
                   "value": "-1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "обновление коммента",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"статус код 200\", function() {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200])\r",
+                  "});\r",
+                  "\r",
+                  "const target = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"обновленный комментарий\", function() {\r",
+                  "    pm.expect(target.comments[0].text).to.eql(\"updated commentary\");\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"text\" : \"updated commentary\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/:userId/events/:eventId/comments/:commentId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                ":userId",
+                "events",
+                ":eventId",
+                "comments",
+                ":commentId"
+              ],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "{{uid}}"
+                },
+                {
+                  "key": "eventId",
+                  "value": "1"
+                },
+                {
+                  "key": "commentId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "получение комментов",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"статус код 200\", function() {\r",
+                  "    pm.expect\r",
+                  "});\r",
+                  "\r",
+                  "const target = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"длина 1\", function() {\r",
+                  "    pm.expect(target.length).to.eql(1);\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/:userId/events/:eventId/comments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                ":userId",
+                "events",
+                ":eventId",
+                "comments"
+              ],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "{{uid}}"
+                },
+                {
+                  "key": "eventId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "получение коммента по id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"статус код 200\", function() {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200]);\r",
+                  "})\r",
+                  "\r",
+                  "const target = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"верный ответ от сервера\", function() {\r",
+                  "    pm.expect(target).to.have.property(\"userName\");\r",
+                  "    pm.expect(target).to.have.property(\"text\");\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/:userId/events/:eventId/comments/:commentId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                ":userId",
+                "events",
+                ":eventId",
+                "comments",
+                ":commentId"
+              ],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "{{uid}}"
+                },
+                {
+                  "key": "eventId",
+                  "value": "1"
+                },
+                {
+                  "key": "commentId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "удаление комментария",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function() {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([204]);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/:userId/events/:eventId/comments/:commentId",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                ":userId",
+                "events",
+                ":eventId",
+                "comments",
+                ":commentId"
+              ],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "{{uid}}"
+                },
+                {
+                  "key": "eventId",
+                  "value": "1"
+                },
+                {
+                  "key": "commentId",
+                  "value": "1"
                 }
               ]
             }

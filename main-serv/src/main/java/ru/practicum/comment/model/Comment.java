@@ -4,9 +4,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import ru.practicum.event.model.Event;
 import ru.practicum.user.model.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comments")
@@ -25,4 +27,12 @@ public class Comment {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    Event event;
+
+    @Column(name = "created")
+    LocalDateTime created = LocalDateTime.now();
+
+    @Column(name = "patched")
+    LocalDateTime patched;
 }

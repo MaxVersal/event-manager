@@ -3,8 +3,6 @@ package ru.practicum.priv.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.comment.dto.CommentAccept;
-import ru.practicum.comment.service.CommentService;
 import ru.practicum.event.dto.*;
 import ru.practicum.event.service.EventService;
 import ru.practicum.request.dto.ParticipationRequestDto;
@@ -21,8 +19,6 @@ public class EventsControllerPrivate {
     private final EventService service;
 
     private final RequestService requestService;
-
-    private final CommentService commentService;
 
     @PostMapping("/{userId}/events")
     public ResponseEntity<EventResponse> postEvent(@PathVariable(name = "userId") @Positive Long userId,
@@ -61,13 +57,6 @@ public class EventsControllerPrivate {
                                                                           @PathVariable @Positive Long userId,
                                                                           @PathVariable @Positive Long eventId) {
         return requestService.confirmRequests(request, eventId, userId);
-    }
-
-    @PostMapping("/{userId}/events/{eventId}/comment")
-    public ResponseEntity<EventResponse> postComment(@PathVariable Long userId,
-                                                     @PathVariable Long eventId,
-                                                     @RequestBody @Valid CommentAccept commentAccept) {
-        return commentService.postComment(userId, eventId, commentAccept);
     }
 
 
