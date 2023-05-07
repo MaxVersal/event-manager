@@ -5,12 +5,14 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.category.model.Category;
+import ru.practicum.comment.model.Comment;
 import ru.practicum.user.model.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "events")
@@ -72,4 +74,7 @@ public class Event {
 
     @Column(name = "views")
     Integer views;
+
+    @OneToMany(mappedBy = "event")
+    Set<Comment> comments;
 }

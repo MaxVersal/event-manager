@@ -1,2 +1,1 @@
-# java-explore-with-me
-Template repository for ExploreWithMe project.
+https://github.com/MaxVersal/java-explore-with-me/pull/5#issue-1696646470
